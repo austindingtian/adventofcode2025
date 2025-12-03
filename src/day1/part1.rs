@@ -13,15 +13,15 @@ pub fn solution() {
         for line in lines.map_while(Result::ok) {
             // get the string slice for rotation direction and distance
             let side = &line[..1];
-            let distance = &mut line[1..].parse::<i32>().unwrap();
+            let mut distance = line[1..].parse::<i32>().unwrap();
 
             // multiply distance by direction
             if let Some(dir) = dir_map.get(side) {
-                *distance *= *dir;
+                distance *= dir;
             }
 
             // rotate dial and update password
-            dial_pos = rotate_dial(&dial_pos, *distance);
+            dial_pos = rotate_dial(dial_pos, distance);
             if dial_pos == 0 { password += 1; }
         }
         println!("Day 1 Part One answer: {password}");
@@ -29,8 +29,8 @@ pub fn solution() {
 }
 
 // Return the new dial position after rotation
-fn rotate_dial(start_pos: &i32, rotation: i32) -> i32 {
-    let mut dial_pos = *start_pos;
+fn rotate_dial(start_pos: i32, rotation: i32) -> i32 {
+    let mut dial_pos = start_pos;
     //println!("Moving the dial {rotation} steps");
     dial_pos += rotation;
 
