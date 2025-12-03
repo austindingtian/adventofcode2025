@@ -24,7 +24,7 @@ pub fn solution() {
             dial_pos = rotate_dial(&dial_pos, *distance);
             if dial_pos == 0 { password += 1; }
         }
-        println!("{password}");
+        println!("Day 1 Part One answer: {password}");
     }
 }
 
