@@ -1,10 +1,5 @@
-use adventofcode2025::utils;
+use adventofcode2025::{day1};
 
 fn main() {
-    if let Ok(lines) = utils::load_puzzle_input("./day1/input.txt") {
-        //Consume the file iterator
-        for line in lines.map_while(Result::ok) {
-            println!("{}", line);
-        }
-    }
+    day1::part1::solution();
 }
