@@ -3,6 +3,10 @@ pub mod day1 {
     pub mod part2;
 }
 
+pub mod day2 {
+    pub mod part1;
+}
+
 pub mod utils {
     use std::fs::File;
     use std::io::{self, BufRead};
