@@ -1,10 +1,10 @@
-use crate::load_puzzle_input;
+use crate::utils::load_puzzle_input;
 
-pub fn solution () {
+pub fn solution(input_path: &str, part: Option<u8>) {
     let mut id_ranges: Vec<IDRange> = Vec::new();
 
-    // read in product id ranges
-    if let Ok(input) = load_puzzle_input("./src/day2/input.txt") {
+    // read in product id ranges and process them into list of ID Ranges
+    if let Ok(input) = load_puzzle_input(input_path) {
         for line in input.map_while(Result::ok) {
             let ranges = line.split(',');
             for range in ranges {
@@ -13,11 +13,35 @@ pub fn solution () {
         }
     }
 
+    // solve for part1 or part2
+    match part {
+        Some(1) => part1(&id_ranges),
+        Some(2) => part2(&id_ranges),
+        _ => {
+            part1(&id_ranges);
+            part2(&id_ranges);
+        }
+    }
+}
+
+fn part1(id_ranges: &Vec<IDRange>) {
     // process id ranges to find invalid ids
     let mut invalid_ids: Vec<usize> = Vec::new();
     let mut invalid_sum = 0;
     for id_range in id_ranges {
-        let (invalids_in_range, isum) = process_id_range(id_range);
+        let (invalids_in_range, isum) = process_id_range(id_range, self::id_is_valid);
+        invalid_ids.extend(invalids_in_range);
+        invalid_sum += isum;
+    }
+    println!("Day 1 Part Two answer: {}", invalid_sum);
+}
+
+fn part2(id_ranges: &Vec<IDRange>) {
+    // process id ranges to find invalid ids
+    let mut invalid_ids: Vec<usize> = Vec::new();
+    let mut invalid_sum = 0;
+    for id_range in id_ranges {
+        let (invalids_in_range, isum) = process_id_range(id_range, self::id_is_valid_two);
         invalid_ids.extend(invalids_in_range);
         invalid_sum += isum;
     }
@@ -36,7 +60,7 @@ impl IDRange {
 }
 
 // Iterates through the range of IDs and returns the list of invalid ones
-fn process_id_range(id_range: IDRange) -> (Vec<usize>, usize) {
+fn process_id_range(id_range: &IDRange, validity_func: fn(usize) -> bool) -> (Vec<usize>, usize) {
     let mut invalid_ids = Vec::new();
     let mut invalid_sum = 0;
 
@@ -44,7 +68,7 @@ fn process_id_range(id_range: IDRange) -> (Vec<usize>, usize) {
     let upper = id_range.1;
 
     for id in lower..upper+1 {
-        if !id_is_valid_two(id) {
+        if !validity_func(id) {
             invalid_ids.push(id);
             invalid_sum += id;
         }
@@ -64,6 +88,28 @@ fn count_digits(n: usize) -> usize {
     count
 }
 
+// Check if a given ID is invalid or not based on the repeated sequence rule given by the puzzle
+fn id_is_valid(id: usize) -> bool {
+    let id_length = count_digits(id);
+    
+    if id_length % 2 != 0 {
+        return true
+    }
+    
+    let mut temp = id;
+    let mut half = Vec::with_capacity(id_length/2);
+    for _ in 0..id_length/2 {
+        half.push(temp % 10);
+        temp /= 10;
+    }
+    
+    for i in 0..id_length/2 {
+        if temp % 10 != half[i] { return true }
+        temp /= 10;
+    }
+    
+    return false
+}
 
 // Check if a given ID is invalid or not based on AT LEAST twice repeated sequence rule in Part Two
 fn id_is_valid_two(id: usize) -> bool {
