@@ -21,7 +21,7 @@ pub fn solution () {
         invalid_ids.extend(invalids_in_range);
         invalid_sum += isum;
     }
-    println!("Day 2 Part One answer: {}", invalid_sum);
+    println!("Day 2 Part Two answer: {}", invalid_sum);
 }
 
 struct IDRange(usize, usize);
@@ -44,7 +44,7 @@ fn process_id_range(id_range: IDRange) -> (Vec<usize>, usize) {
     let upper = id_range.1;
 
     for id in lower..upper+1 {
-        if !id_is_valid(id) {
+        if !id_is_valid_two(id) {
             invalid_ids.push(id);
             invalid_sum += id;
         }
@@ -53,10 +53,10 @@ fn process_id_range(id_range: IDRange) -> (Vec<usize>, usize) {
 }
 
 // Counts the number of digits in a given unsigned integer
-pub fn count_digits(n: usize) -> usize {
+fn count_digits(n: usize) -> usize {
     let mut temp = n;
     let mut count = 0;
-
+    
     while temp != 0 {
         temp /= 10;
         count += 1;
@@ -64,37 +64,40 @@ pub fn count_digits(n: usize) -> usize {
     count
 }
 
-// Check if a given ID is invalid or not based on the repeated sequence rule given by the puzzle
-fn id_is_valid(id: usize) -> bool {
-    let id_length = count_digits(id);
-    
-    if id_length % 2 != 0 {
-        return true
+
+// Check if a given ID is invalid or not based on AT LEAST twice repeated sequence rule in Part Two
+fn id_is_valid_two(id: usize) -> bool {
+    let id_len: usize = count_digits(id);
+    let mut pattern_freqs = Vec::new();
+
+    // find divisors
+    for divisor in 2..=id_len {
+        if id_len % divisor == 0 { 
+            pattern_freqs.push(divisor) 
+        };
     }
     
-    let mut temp = id;
-    let mut half = Vec::with_capacity(id_length/2);
-    for _ in 0..id_length/2 {
-        half.push(temp % 10);
-        temp /= 10;
-    }
+    // check possible patterns for repetition
+    let id_as_str = format!("{id}");
+    for freq in pattern_freqs {
+        let pattern_len = id_len/freq;
+        let pattern = &id_as_str[..pattern_len];
+        let mut count = 1;
     
-    for i in 0..id_length/2 {
-        if temp % 10 != half[i] { return true }
-        temp /= 10;
+        for i in (pattern_len..id_len).step_by(pattern_len) {
+            let next_sequence = &id_as_str[i..i+pattern_len];
+            if next_sequence != pattern {
+                continue
+            } else {
+                count += 1;
+            }
+        }
+        // if the pattern count is equal to the expected frequency of the pattern,
+        // we have an invalid id
+        if count == freq { 
+            //println!("{id_as_str}");
+            return false 
+        };
     }
-    
-    return false
+    return true
 }
-
-// separates the digits in a number into a list
-// pub fn separate_digits(n: usize) -> Vec<usize> {
-//     let mut temp = n;
-//     let mut digits = Vec::new();
-
-//     while temp != 0 {
-//         digits.push(temp % 10);
-//         temp /= 10;
-//     }
-//     digits
-// }

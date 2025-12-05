@@ -5,6 +5,7 @@ pub mod day1 {
 
 pub mod day2 {
     pub mod part1;
+    pub mod part2;
 }
 
 pub mod utils {
