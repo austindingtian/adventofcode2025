@@ -9,19 +9,14 @@ fn main() {
         eprintln!("Problem parsing arguments: {err}");
         process::exit(1);
     });
-    println!("{:?}", config);
-
     run(config);
-    // day1::part1::solution();
-    // day1::part2::solution();
-    // day2::part1::solution();
-    // day2::part2::solution();
 }
 
 fn run(cfg: Config) {
     match cfg.day {
         1 => puzzles::day1::solution(&cfg.input_path),
         2 => puzzles::day2::solution(&cfg.input_path, None),
+        3 => puzzles::day3::solution(&cfg.input_path),
         _ => println!("Oops not implemented yet")
     }
 }
