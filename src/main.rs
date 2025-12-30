@@ -19,6 +19,7 @@ fn run(cfg: Config) {
         3 => puzzles::day3::solution(&cfg.input_path),
         4 => puzzles::day4::solution(&cfg.input_path),
         5 => puzzles::day5::solution(&cfg.input_path),
+        6 => puzzles::day6::solution(&cfg.input_path),
         _ => println!("Oops not implemented yet")
     }
 }
