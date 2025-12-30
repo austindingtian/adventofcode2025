@@ -24,6 +24,36 @@ pub fn solution(input_path: &str) {
         }
     }
     println!("Day 5 Part One Answer: {num_fresh}");
+
+    // part 2
+    id_ranges.sort();
+    let (mut x, mut y) = id_ranges[0];
+
+    let mut total_fresh_ids = 0;
+    for (a, b) in &id_ranges[1..] {
+        let is_overlapping = *a >= x && *a <= y;
+
+        if is_overlapping {
+            match *b > y {
+                true => y = *b,
+                false => continue
+            }
+        } else {
+            total_fresh_ids += 1 + (y - x);
+            x = *a;
+            y = *b;
+        }
+    }
+    total_fresh_ids += 1 + (y - x);
+    println!("Day 5 Part Two Answer: {}", total_fresh_ids);
+
+    // brute force answer takes forever on non-sample puzzle input
+    // let mut all_fresh_ids = HashSet::new();
+    // for (lower, upper) in &id_ranges {
+        // for i in *lower..=*upper {
+            // all_fresh_ids.insert(i);
+        // }
+    // }
 }
 
 fn parse_range(range: &str) -> (usize, usize) {
